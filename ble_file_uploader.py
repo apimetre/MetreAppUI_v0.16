@@ -165,7 +165,7 @@ class BleUploader():
                     time.sleep(0.2)
                     cmd_counter = cmd_counter + 1
                     print('cmd_counter')
-                    if warning and cmd_counter > 15:
+                    if warning and cmd_counter > 60:
                         self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
                         break
                     
