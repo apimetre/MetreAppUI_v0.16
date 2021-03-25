@@ -271,7 +271,7 @@ def main(app_console, log):
     files = []
     all_src_files = os.listdir(source_path)
     for file in all_src_files:
-        if ".gitignore" not in file:
+        if ".gitkeep" not in file:
             files.append(file)
     print("these are the files")
     print(files)
