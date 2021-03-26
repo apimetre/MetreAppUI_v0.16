@@ -244,6 +244,9 @@ class BleUploader():
                     if file.endswith('.bin'):
                         counter = 1
                     filename, ext = file.split('.')
+                    if int(filename) < 1614306565:
+                        ConsoleAlert('Warning: May need to replace clock battery!', self.v_)
+                    
                     out_msg =json.dumps({"cmd": "ble_get_file", "path":     "/sd/" + file})
                     in_buf = (out_msg + '\n').encode('utf-8')
                     result_resp = []
