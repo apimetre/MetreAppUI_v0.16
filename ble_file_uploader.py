@@ -341,6 +341,12 @@ class BleUploader():
             #cmd_fn(out_msg_tone, show_progress = False)                                     
                                      
             self.console_box_.text = 'Disconnecting from MetreAce Instrument'
+            outmsg_s0 = json.dumps({'cmd':'avr', 'payload':{'cmd':'sensors', 'ms':0}})
+            cmd_fn(outmsg_s0, show_progress = False)
+            
+            outmsg_t0 = json.dumps({'cmd':'avr', 'payload':{'cmd':'thermistor', 'ms':0}})
+            cmd_fn(outmsg_t0, show_progress = False)
+                      
             out_msg2 =json.dumps({"cmd": "disconnect_ble"})
             rstring, no_counter = cmd_fn(out_msg2, show_progress = True)
             self.console_box_.text = rstring
