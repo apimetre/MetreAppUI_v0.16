@@ -227,7 +227,7 @@ class BleUploader():
             time.sleep(0.5)
             
             out_msg_text =json.dumps({"cmd":"oled", "text":"Uploading..."})
-            cmd_fn(out_msg_text, show_progress = False) 
+            cmd_fn(out_msg_text, show_progress = False, warning = True) 
                                       
             FLAG = False
             file_wrongsize = []
@@ -305,7 +305,13 @@ class BleUploader():
                                 if upload_size == file_size:
 
                                     out_msg_del =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
-                                    r_del, counter = cmd_fn(out_msg_del, True, counter)
+                                    r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
+                                    try:
+                                        out_msg_del_2 =json.dumps({"cmd": "remove", "path":     "/sd/._" + file})
+                                        r_del_2, counter = cmd_fn(out_msg_del_2, show_progress = True, cmd_counter = counter, warning = True)
+                                        
+                                    except:
+                                        pass
 
                                 else:
                                     size_diff = file_size - upload_size
