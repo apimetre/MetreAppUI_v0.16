@@ -233,7 +233,7 @@ class BleUploader():
             FLAG = False
             file_wrongsize = []
             for file in list_of_dirs:
-                time_out_counter = 1
+                timeout_counter = 1
                 if file.startswith('._'):
                     out_msg_del_e =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
                     r_del, counter = cmd_fn(out_msg_del_e, show_progress = False, warning = True)
