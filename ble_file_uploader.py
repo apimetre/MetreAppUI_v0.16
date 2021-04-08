@@ -99,7 +99,7 @@ class BleUploader():
             return int(tz_factor)        
         
                     
-        def cmd_fn(out_msg, show_progress = False, cmd_counter = 0, warning = False):
+        def cmd_fn(out_msg, show_progress = False, cmd_counter = 0, to_counter = 0, warning = False):
             global in_buf
             #print(f"json_text: {out_msg}")
             in_buf = (out_msg + '\n').encode('utf-8')
@@ -164,8 +164,9 @@ class BleUploader():
                         break
                     time.sleep(0.2)
                     cmd_counter = cmd_counter + 1
-                    print('cmd_counter')
-                    if warning and cmd_counter > 60:
+                    to_counter = to_counter + 1
+                    print('cmd_counter', cmd_counter)
+                    if warning and to_counter > 60:
                         self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
                         break
                     
@@ -232,8 +233,10 @@ class BleUploader():
             FLAG = False
             file_wrongsize = []
             for file in list_of_dirs:
-                if file.startswith('.'):
-                    continue
+                time_out_counter = 1
+                if file.startswith('._'):
+                    out_msg_del_e =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
+                    r_del, counter = cmd_fn(out_msg_del_e, show_progress = False, warning = True)
                 elif file.endswith(('.bin', '.json')):
                     file_ix = list_of_dirs.index(file)
                     file_size = file_sizes[file_ix]
@@ -293,6 +296,11 @@ class BleUploader():
                                     #continue
                             time.sleep(0.2)
                             counter = counter + 1
+                            timeout_counter = timeout_counter + 1
+                            if timeout_counter > 120:
+                                self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                break
+                            
                         except KeyboardInterrupt as e:
                             cb.reset()
                             print(f"Ctrl-C Exiting: {e}")
@@ -306,12 +314,9 @@ class BleUploader():
 
                                     out_msg_del =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
                                     r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
-                                    try:
-                                        out_msg_del_2 =json.dumps({"cmd": "remove", "path":     "/sd/._" + file})
-                                        r_del_2, counter = cmd_fn(out_msg_del_2, show_progress = True, cmd_counter = counter, warning = True)
+                                  
                                         
-                                    except:
-                                        pass
+                                 
 
                                 else:
                                     size_diff = file_size - upload_size
