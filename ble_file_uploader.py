@@ -345,18 +345,18 @@ class BleUploader():
             self.ble_status_icon_.background_color = 'white'
             self.v_['ble_status'].text = ''
             
-            out_msg_txt =json.dumps({"cmd":"oled", "text":"Eject"})
+            out_msg_txt =json.dumps({"cmd":"ble_state","active":"False"})
             cmd_fn(out_msg_txt, show_progress = False)
 
             #out_msg_tone =json.dumps({"cmd": "avr", "payload": { "cmd": "tone", "freq":"1000", "duration":"1000" }})
             #cmd_fn(out_msg_tone, show_progress = False)                                     
                                      
             self.console_box_.text = 'Disconnecting from MetreAce Instrument'
-            outmsg_s0 = json.dumps({'cmd':'avr', 'payload':{ "cmd": "sensors", "rep_ms":0, "smpl_ms":0, "n":1 }})
-            cmd_fn(outmsg_s0, show_progress = False)
+            #outmsg_s0 = json.dumps({'cmd':'avr', 'payload':{ "cmd": "sensors", "rep_ms":0, "smpl_ms":0, "n":1 }})
+            #cmd_fn(outmsg_s0, show_progress = False)
             
-            outmsg_t0 = json.dumps({'cmd':'avr', 'payload':{ "cmd": "thermistor", "rep_ms":0, "smpl_ms":0, "n":1 }})
-            cmd_fn(outmsg_t0, show_progress = False)
+            #outmsg_t0 = json.dumps({'cmd':'avr', 'payload':{ "cmd": "thermistor", "rep_ms":0, "smpl_ms":0, "n":1 }})
+            #cmd_fn(outmsg_t0, show_progress = False)
                       
             out_msg2 =json.dumps({"cmd": "disconnect_ble"})
             rstring, no_counter = cmd_fn(out_msg2, show_progress = True)
