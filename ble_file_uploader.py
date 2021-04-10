@@ -269,21 +269,25 @@ class BleUploader():
                                 event = self.event_queue.pop()
                                 if 'post' in event:
                                     #print("printing case where post is in event")
-                                    response = json.loads(event['post'])
-                                    if 'cmd' in response:
-                                        self.py_ble_uart.write((event    ['post']+'\n').encode())
-                                        self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                    else:
-                                        self.print_wrap(f"event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
-                                        if response['ok']:
-                                            try:
-                                                result_resp.append(response['resp'])
-                                                self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                            except:
-                                                result_resp.append(response['ack'])
-                                                self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                    try:
+                                        response = json.loads(event['post'])
+                                        if 'cmd' in response:
+                                            self.py_ble_uart.write((event    ['post']+'\n').encode())
+                                            self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                         else:
-                                            break
+                                            self.print_wrap(f"event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
+                                            if response['ok']:
+                                                try:
+                                                    result_resp.append(response['resp'])
+                                                    self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                except:
+                                                    result_resp.append(response['ack'])
+                                                    self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                            else:
+                                                break
+                                    except:
+                                        self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                        break
 
                                 else:
                                     print(str(event))
@@ -367,4 +371,4 @@ class BleUploader():
             ble_icon_path = 'images/ble_off.png'
             self.ble_status_icon_.image = ui.Image.named(ble_icon_path)
             self.ble_status_icon_.background_color = 'black'           
-            return conversion_status    
+            return conversion_status 
