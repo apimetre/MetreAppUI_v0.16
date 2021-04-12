@@ -1,3 +1,4 @@
+
 # Python imports
 import ui
 import os
@@ -272,22 +273,27 @@ class BleUploader():
                                 in_buf = ''
                             if len(self.event_queue):
                                 event = self.event_queue.pop()
+                                #try:
+                                #    #loading
+                                #except:
+                                #    self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                #    break
                                 if 'post' in event:
                                     #print("printing case where post is in event")
                                     try:
                                         response = json.loads(event['post'])
                                         if 'cmd' in response:
                                             self.py_ble_uart.write((event    ['post']+'\n').encode())
-                                            self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                            self.print_wrap(f"cmd_event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                         else:
-                                            self.print_wrap(f"event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
+                                            self.print_wrap(f"no_cmd_event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
                                             if response['ok']:
                                                 try:
                                                     result_resp.append(response['resp'])
-                                                    self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                    self.print_wrap(f"ok_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                                 except:
                                                     result_resp.append(response['ack'])
-                                                    self.print_wrap(f"event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                    self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                             else:
                                                 break
                                     except:
@@ -316,6 +322,7 @@ class BleUploader():
                             cb.reset()
                             print(f"Ctrl-C Exiting: {e}")
                             break
+                        print('result_resp is ' + len(result_resp))
                         if len(result_resp) > 2:
                            
                             try:
