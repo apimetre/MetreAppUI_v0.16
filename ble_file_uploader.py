@@ -181,7 +181,7 @@ class BleUploader():
             self.console_box_.text = "Connected"
             global counter
             counter = 0
-            connect_msg_txt =json.dumps({"cmd":"ble_state","active":"True"})
+            connect_msg_txt =json.dumps({"cmd":"set_ble_state","active":true})
             cmd_fn(connect_msg_txt, show_progress = False)
 
             ble_icon_path = 'images/ble_connected.png'
