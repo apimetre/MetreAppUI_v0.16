@@ -322,7 +322,7 @@ class BleUploader():
                             cb.reset()
                             print(f"Ctrl-C Exiting: {e}")
                             break
-                        print('result_resp is ' + len(result_resp))
+                        print('result_resp is ' + str(len(result_resp)))
                         if len(result_resp) > 2:
                            
                             try:
