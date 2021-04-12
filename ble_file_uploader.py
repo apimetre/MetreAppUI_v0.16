@@ -217,6 +217,11 @@ class BleUploader():
                  #rstring, no_counter = cmd_fn(out_msg2)
                  return False
             self.console_box_.text = str(list_of_dirs)
+            try:
+                list_of_dirs.remove('params.json')
+                list_of_dirs.remove('device.json')
+            except ValueError:
+                pass
             file_list = []
             for file in list_of_dirs:
                 if file.startswith('.'):
