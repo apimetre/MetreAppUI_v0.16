@@ -221,14 +221,15 @@ class BleUploader():
                  return False
             self.console_box_.text = str(list_of_dirs)
             try:
-                list_of_dirs.remove('params.json')
-                list_of_dirs.remove('device.json')
-                print('this is the new list_of_dirs ' + str(list_of_dirs))
+                list_of_dirs2 = list_of_dirs.remove('params.json')
+                list_of_dirs_ = list_of_dirs2.remove('device.json')
+                print('this is the new list_of_dirs ' + str(list_of_dirs_))
             except:
-                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs))
+                list_of_dirs_ = list_of_dirs
+                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs_))
                 pass
             file_list = []
-            for file in list_of_dirs:
+            for file in list_of_dirs_:
                 if file.startswith('.'):
                     continue
                 elif file.endswith('.bin'):             
@@ -244,7 +245,8 @@ class BleUploader():
                                       
             FLAG = False
             file_wrongsize = []
-            for file in list_of_dirs:
+            for file in list_of_dirs_:
+                print(list_of_dirs_)
                 timeout_counter = 1
                 if file.startswith('._'):
                     out_msg_del_e =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
