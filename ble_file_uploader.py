@@ -1,4 +1,4 @@
-  
+   
 # Python imports
 import ui
 import os
@@ -236,6 +236,7 @@ class BleUploader():
                                       
             FLAG = False
             file_wrongsize = []
+            first_alert = True
             for file in list_of_dirs:
                 
                 timeout_counter = 1
@@ -263,8 +264,9 @@ class BleUploader():
                         if file.endswith('.bin'):
                             counter = 1
                         filename, ext = file.split('.')
-                        if int(filename) < 1614306565:
+                        if int(filename) < 1614306565 and first_alert:
                             ConsoleAlert('Warning: May need to replace clock battery!', self.v_)
+                            first_alert = False
                         
                         out_msg =json.dumps({"cmd": "ble_get_file", "path":     "/sd/" + file})
                         in_buf = (out_msg + '\n').encode('utf-8')
@@ -281,13 +283,8 @@ class BleUploader():
                                     in_buf = ''
                                 if len(self.event_queue):
                                     event = self.event_queue.pop()
-                                    #try:
-                                    #    #loading
-                                    #except:
-                                    #    self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
-                                    #    break
+
                                     if 'post' in event:
-                                        #print("printing case where post is in event")
                                         try:
                                             response = json.loads(event['post'])
                                             if 'cmd' in response:
@@ -297,11 +294,10 @@ class BleUploader():
                                                 self.print_wrap(f"no_cmd_event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
                                                 if response['ok']:
                                                     try:
-                                                        result_resp.append(response['resp'])
-                                                        self.print_wrap(f"ok_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                        #self.print_wrap(f"resp_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                                     except:
                                                         result_resp.append(response['ack'])
-                                                        self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                        #self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                                 else:
                                                     break
                                         except:
@@ -311,14 +307,14 @@ class BleUploader():
                                     else:
                                         print(str(event))
                                         #response = json.loads(str(event))
-                                        self.print_wrap(f"event: {event}",    self.INDENT_STR, self.CONSOLE_WIDTH)
                                         if event['ok']:
                                            self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                           continue
+                                           pass
                                         else:
                                            FLAG = True
+                                           self.print_wrap(f"event: {event}",    self.INDENT_STR, self.CONSOLE_WIDTH)
                                            break
-                                        #continue
+                                        
                                 time.sleep(0.2)
                                 counter = counter + 1
                                 timeout_counter = timeout_counter + 1
@@ -330,19 +326,16 @@ class BleUploader():
                                 cb.reset()
                                 print(f"Ctrl-C Exiting: {e}")
                                 break
-                            print('result_resp is ' + str(len(result_resp)))
+                           
                             if len(result_resp) > 2:
                                
                                 try:
                                     shutil.move('./result.bin', 'data_files/uploaded_files/' + file)
                                     upload_size = os.stat('data_files/uploaded_files/' + file)[6]
                                     if upload_size == file_size:
-    
                                         out_msg_del =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
                                         r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
-                                      
-                                            
-                                     
+
     
                                     else:
                                         size_diff = file_size - upload_size
