@@ -1,4 +1,4 @@
- 
+   
 # Python imports
 import ui
 import os
@@ -130,7 +130,6 @@ class BleUploader():
                          
                             if 'post' in event:
                                 response = json.loads(event['post'])
-                         
                                 print('recieved event post')
                                 if 'cmd' in response:
                                     try:
@@ -141,7 +140,6 @@ class BleUploader():
                                         
                                         continue
                                     except:
-                                        print('No cmd in response')
                                         resp_string = "Connecting"
                                         break
             
@@ -221,15 +219,14 @@ class BleUploader():
                  return False
             self.console_box_.text = str(list_of_dirs)
             try:
-                list_of_dirs2 = list_of_dirs.remove('params.json')
-                list_of_dirs_ = list_of_dirs2.remove('device.json')
-                print('this is the new list_of_dirs ' + str(list_of_dirs_))
-            except:
-                list_of_dirs_ = list_of_dirs
-                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs_))
+                list_of_dirs.remove('params.json')
+                list_of_dirs.remove('device.json')
+                print('this is the new list_of_dirs ' + str(list_of_dirs))
+            except ValueError:
+                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs))
                 pass
             file_list = []
-            for file in list_of_dirs_:
+            for file in list_of_dirs:
                 if file.startswith('.'):
                     continue
                 elif file.endswith('.bin'):             
@@ -245,127 +242,125 @@ class BleUploader():
                                       
             FLAG = False
             file_wrongsize = []
-            for file in list_of_dirs_:
-                print(list_of_dirs_)
+            for file in list_of_dirs:
                 timeout_counter = 1
                 if file.startswith('._'):
                     out_msg_del_e =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
                     r_del, counter = cmd_fn(out_msg_del_e, show_progress = False, warning = True)
                 elif file.endswith(('.bin', '.json')):
-                    file_ix = list_of_dirs.index(file)
-                    file_size = file_sizes[file_ix]
-                    try:
-                        self.console_box_.text =  'Fetching ' + str(file_list.index(file) + 1) + ' out of ' + str(len(file_list)) + ' test files from your MetreAce'
-                    except:
-                        pass
-                    if file.endswith('.bin'):
-                        counter = 1
-                    filename, ext = file.split('.')
-                    if int(filename) < 1614306565:
-                        ConsoleAlert('Warning: May need to replace clock battery!', self.v_)
-                    
-                    out_msg =json.dumps({"cmd": "ble_get_file", "path":     "/sd/" + file})
-                    in_buf = (out_msg + '\n').encode('utf-8')
-                    result_resp = []
-                    while True:
+                    if "device" in file:
+                        print('Skipping over ' + file)
+                        continue
+                    elif "params" in file:
+                        print('Skipping over ' + file)
+                    else:
+                        file_ix = list_of_dirs.index(file)
+                        file_size = file_sizes[file_ix]
                         try:
-                            if self.progress_bar_.fillbar_.width < 0.8:
-                                self.progress_bar_.update_progress_bar(counter*.005)
-                            else: 
-                                self.progress_bar_.update_progress_bar(counter*.0025)
-                            if len(in_buf):
-                                in_chars = in_buf
-                                self.py_ble_buffer.buffer(in_chars)
-                                in_buf = ''
-                            if len(self.event_queue):
-                                event = self.event_queue.pop()
-                                #try:
-                                #    #loading
-                                #except:
-                                #    self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
-                                #    break
-                                if 'post' in event:
-                                    #print("printing case where post is in event")
-                                    try:
-                                        response = json.loads(event['post'])
-                                        if 'cmd' in response:
-                                            self.py_ble_uart.write((event    ['post']+'\n').encode())
-                                            self.print_wrap(f"cmd_event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                        else:
-                                            self.print_wrap(f"no_cmd_event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
-                                            if response['ok']:
-                                                try:
-                                                    result_resp.append(response['resp'])
-                                                    self.print_wrap(f"ok_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                                except:
-                                                    result_resp.append(response['ack'])
-                                                    self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                            else:
-                                                break
-                                    except:
-                                        self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
-                                        break
-
-                                else:
-                                    print(str(event))
-                                    #response = json.loads(str(event))
-                                    self.print_wrap(f"event: {event}",    self.INDENT_STR, self.CONSOLE_WIDTH)
-                                    if event['ok']:
-                                       self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
-                                       continue
-                                    else:
-                                       FLAG = True
-                                       break
-                                    #continue
-                            time.sleep(0.2)
-                            counter = counter + 1
-                            timeout_counter = timeout_counter + 1
-                            if timeout_counter > 120:
-                                self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
-                                break
-                            
-                        except KeyboardInterrupt as e:
-                            cb.reset()
-                            print(f"Ctrl-C Exiting: {e}")
-                            break
-                        print('result_resp is ' + str(len(result_resp)))
-                        if len(result_resp) > 2:
-                           
+                            self.console_box_.text =  'Fetching ' + str(file_list.index(file) + 1) + ' out of ' + str(len(file_list)) + ' test files from your MetreAce'
+                        except:
+                            pass
+                        if file.endswith('.bin'):
+                            counter = 1
+                        filename, ext = file.split('.')
+                        if int(filename) < 1614306565:
+                            ConsoleAlert('Warning: May need to replace clock battery!', self.v_)
+                        
+                        out_msg =json.dumps({"cmd": "ble_get_file", "path":     "/sd/" + file})
+                        in_buf = (out_msg + '\n').encode('utf-8')
+                        result_resp = []
+                        while True:
                             try:
-                                print(' TRYING TO MOVE ' + file)
-                                shutil.move('./result.bin', 'data_files/uploaded_files/' + file)
-                                upload_size = os.stat('data_files/uploaded_files/' + file)[6]
-                                if upload_size == file_size:
-
-                                    out_msg_del =json.dumps({"cmd": "remove", "path": "/sd/" + file})
-                                    print('SENT COMMAND TO REMOVE' )
-                                    r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
-                                  
+                                if self.progress_bar_.fillbar_.width < 0.8:
+                                    self.progress_bar_.update_progress_bar(counter*.005)
+                                else: 
+                                    self.progress_bar_.update_progress_bar(counter*.0025)
+                                if len(in_buf):
+                                    in_chars = in_buf
+                                    self.py_ble_buffer.buffer(in_chars)
+                                    in_buf = ''
+                                if len(self.event_queue):
+                                    event = self.event_queue.pop()
+                                    #try:
+                                    #    #loading
+                                    #except:
+                                    #    self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                    #    break
+                                    if 'post' in event:
+                                        #print("printing case where post is in event")
+                                        try:
+                                            response = json.loads(event['post'])
+                                            if 'cmd' in response:
+                                                self.py_ble_uart.write((event    ['post']+'\n').encode())
+                                                self.print_wrap(f"cmd_event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                            else:
+                                                self.print_wrap(f"no_cmd_event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                if response['ok']:
+                                                    try:
+                                                        result_resp.append(response['resp'])
+                                                        self.print_wrap(f"ok_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                    except:
+                                                        result_resp.append(response['ack'])
+                                                        self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                else:
+                                                    break
+                                        except:
+                                            self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                            break
+    
+                                    else:
+                                        print(str(event))
+                                        #response = json.loads(str(event))
+                                        self.print_wrap(f"event: {event}",    self.INDENT_STR, self.CONSOLE_WIDTH)
+                                        if event['ok']:
+                                           self.print_wrap(f"event: {event}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                           continue
+                                        else:
+                                           FLAG = True
+                                           break
+                                        #continue
+                                time.sleep(0.2)
+                                counter = counter + 1
+                                timeout_counter = timeout_counter + 1
+                                if timeout_counter > 120:
+                                    self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
+                                    break
+                                
+                            except KeyboardInterrupt as e:
+                                cb.reset()
+                                print(f"Ctrl-C Exiting: {e}")
+                                break
+                            print('result_resp is ' + str(len(result_resp)))
+                            if len(result_resp) > 2:
+                               
+                                try:
+                                    shutil.move('./result.bin', 'data_files/uploaded_files/' + file)
+                                    upload_size = os.stat('data_files/uploaded_files/' + file)[6]
+                                    if upload_size == file_size:
+    
+                                        out_msg_del =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
+                                        r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
+                                      
+                                            
+                                     
+    
+                                    else:
+                                        size_diff = file_size - upload_size
+                                        file_wrongsize.append(file)
+                                        file_wrongsize.append(size_diff)
                                         
-                                 
-
-                                else:
-                                    size_diff = file_size - upload_size
-                                    file_wrongsize.append(file)
-                                    file_wrongsize.append(size_diff)
-                                    
-                                if file.endswith('bin'):
-                                    counter = counter + 1
-                                    self.progress_bar_.update_progress_bar(counter*.002)
-                                    print('MOVED AND REMOVED ' + file)
-                                    break
-                                else:
-                                    print('MOVED AND REMOVED ' + file)
-                                    break
-                            except:
-                                print('FAILED TO MOVE ' + file)
-                                break                
-                    if FLAG:
-                       counter = 0
-                       cb.reset()
-                       return False
-                   
-                else:
+                                    if file.endswith('bin'):
+                                        counter = counter + 1
+                                        self.progress_bar_.update_progress_bar(counter*.002)
+                                        break
+                                except:
+                                    break                
+                        if FLAG:
+                           counter = 0
+                           cb.reset()
+                           return False
+                       
+                    else:
                     continue
             # Now use FileConverter
             fc = FileConverter(self.progress_bar_, self.console_box_, file_wrongsize)
