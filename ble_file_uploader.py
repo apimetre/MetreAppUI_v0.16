@@ -360,7 +360,7 @@ class BleUploader():
                            cb.reset()
                            return False
                        
-                    else:
+                else:
                     continue
             # Now use FileConverter
             fc = FileConverter(self.progress_bar_, self.console_box_, file_wrongsize)
