@@ -328,6 +328,7 @@ class BleUploader():
                         if len(result_resp) > 2:
                            
                             try:
+                                print(' TRYING TO MOVE ' + file)
                                 shutil.move('./result.bin', 'data_files/uploaded_files/' + file)
                                 upload_size = os.stat('data_files/uploaded_files/' + file)[6]
                                 if upload_size == file_size:
@@ -346,8 +347,13 @@ class BleUploader():
                                 if file.endswith('bin'):
                                     counter = counter + 1
                                     self.progress_bar_.update_progress_bar(counter*.002)
+                                    print('MOVED AND REMOVED ' + file)
                                     break
+                                else:
+                                    print('MOVED AND REMOVED ' + file)
+                                    pass
                             except:
+                                print('FAILED TO MOVE ' + file)
                                 break                
                     if FLAG:
                        counter = 0
