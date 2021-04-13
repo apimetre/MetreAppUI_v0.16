@@ -1,4 +1,4 @@
-   
+  
 # Python imports
 import ui
 import os
@@ -218,13 +218,7 @@ class BleUploader():
                  #rstring, no_counter = cmd_fn(out_msg2)
                  return False
             self.console_box_.text = str(list_of_dirs)
-            try:
-                list_of_dirs.remove('params.json')
-                list_of_dirs.remove('device.json')
-                print('this is the new list_of_dirs ' + str(list_of_dirs))
-            except ValueError:
-                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs))
-                pass
+
             file_list = []
             for file in list_of_dirs:
                 if file.startswith('.'):
@@ -243,17 +237,23 @@ class BleUploader():
             FLAG = False
             file_wrongsize = []
             for file in list_of_dirs:
+                
                 timeout_counter = 1
                 if file.startswith('._'):
+                    print('I SEE ' + file)
                     out_msg_del_e =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
                     r_del, counter = cmd_fn(out_msg_del_e, show_progress = False, warning = True)
                 elif file.endswith(('.bin', '.json')):
                     if "device" in file:
+                        print('I SEE ' + file)
                         print('Skipping over ' + file)
                         continue
                     elif "params" in file:
+                        print('I SEE ' + file)
                         print('Skipping over ' + file)
+                        continue
                     else:
+                        print('I SEE ' + file)
                         file_ix = list_of_dirs.index(file)
                         file_size = file_sizes[file_ix]
                         try:
