@@ -1,4 +1,4 @@
-
+ 
 # Python imports
 import ui
 import os
@@ -221,7 +221,9 @@ class BleUploader():
             try:
                 list_of_dirs.remove('params.json')
                 list_of_dirs.remove('device.json')
+                print('this is the new list_of_dirs ' + str(list_of_dirs))
             except ValueError:
+                print('ValueError Occurred. this is the list of dirs ' + str(list_of_dirs))
                 pass
             file_list = []
             for file in list_of_dirs:
