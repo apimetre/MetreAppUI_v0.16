@@ -130,6 +130,7 @@ class BleUploader():
                          
                             if 'post' in event:
                                 response = json.loads(event['post'])
+                         
                                 print('recieved event post')
                                 if 'cmd' in response:
                                     try:
@@ -140,6 +141,7 @@ class BleUploader():
                                         
                                         continue
                                     except:
+                                        print('No cmd in response')
                                         resp_string = "Connecting"
                                         break
             
@@ -333,7 +335,8 @@ class BleUploader():
                                 upload_size = os.stat('data_files/uploaded_files/' + file)[6]
                                 if upload_size == file_size:
 
-                                    out_msg_del =json.dumps({"cmd": "remove", "path":     "/sd/" + file})
+                                    out_msg_del =json.dumps({"cmd": "remove", "path": "/sd/" + file})
+                                    print('SENT COMMAND TO REMOVE' )
                                     r_del, counter = cmd_fn(out_msg_del, show_progress = True, cmd_counter = counter, warning = True)
                                   
                                         
@@ -351,7 +354,7 @@ class BleUploader():
                                     break
                                 else:
                                     print('MOVED AND REMOVED ' + file)
-                                    pass
+                                    break
                             except:
                                 print('FAILED TO MOVE ' + file)
                                 break                
