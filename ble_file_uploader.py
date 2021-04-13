@@ -294,10 +294,11 @@ class BleUploader():
                                                 self.print_wrap(f"no_cmd_event: {response}",    self.INDENT_STR, self.CONSOLE_WIDTH)
                                                 if response['ok']:
                                                     try:
-                                                        #self.print_wrap(f"resp_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                         result_resp.append(response['resp'])
+                                                         self.print_wrap(f"resp_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                                     except:
                                                         result_resp.append(response['ack'])
-                                                        #self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
+                                                        self.print_wrap(f"ack_event: {response}",   self.INDENT_STR, self.CONSOLE_WIDTH)
                                                 else:
                                                     break
                                         except:
