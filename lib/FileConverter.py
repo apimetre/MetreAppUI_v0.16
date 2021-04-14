@@ -72,6 +72,7 @@ class FileConverter():
                         json.dump(mdata_dict, outfile)
                 except:
                     self.console_box_.text = "One of your test files can't be processed. Mouthpiece ejected too soon?"
+                    shutil.move(file_source + '/'+ file, file_dest + '/' + file)
                     time.sleep(3)
                     continue
         match_status = True
