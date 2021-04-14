@@ -271,7 +271,7 @@ class BleUploader():
                         out_msg =json.dumps({"cmd": "ble_get_file", "path":     "/sd/" + file})
                         in_buf = (out_msg + '\n').encode('utf-8')
                         result_resp = []
-                        while True:
+                        while self.py_ble_uart.periphera:
                             try:
                                 if self.progress_bar_.fillbar_.width < 0.8:
                                     self.progress_bar_.update_progress_bar(counter*.005)
