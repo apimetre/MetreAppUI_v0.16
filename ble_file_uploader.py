@@ -100,7 +100,7 @@ class BleUploader():
             return int(tz_factor)        
         
                     
-        def cmd_fn(out_msg, show_progress = False, cmd_counter = 0, to_counter = 0, warning = False):
+        def cmd_fn(out_msg, show_progress = False, cmd_counter = 0, to_counter = 0, warning = False, to_max = 60):
             global in_buf
             #print(f"json_text: {out_msg}")
             in_buf = (out_msg + '\n').encode('utf-8')
@@ -167,7 +167,7 @@ class BleUploader():
                     cmd_counter = cmd_counter + 1
                     to_counter = to_counter + 1
                     print('cmd_counter', cmd_counter)
-                    if warning and to_counter > 60:
+                    if warning and to_counter > to_max:
                         self.console_box_.text = "Ooops. MetreAce needs to be restarted. \n Eject mouthpiece, close the phone app, and try again"
                         break
                     
@@ -206,7 +206,7 @@ class BleUploader():
             
             out_msg1 =json.dumps({"cmd": "listdir","path": "/sd"})
             try:
-                r1, no_counter = cmd_fn(out_msg1, warning = True)
+                r1, no_counter = cmd_fn(out_msg1, warning = True, to_max = 120)
                 list_of_dirs = r1['dir']
                 file_sizes = r1['stat']
             except:
